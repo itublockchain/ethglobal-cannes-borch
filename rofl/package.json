@@ -10,10 +10,7 @@
     "test2": "ts-node src/test2.ts",
     "test-multi": "ts-node src/test-multi.ts",
     "test-deposit": "ts-node src/test-deposit.ts",
-    "test-rain-api": "ts-node src/test-rain-api.ts",
-    "test-cctp": "ts-node src/test-cctp.ts",
-    "test-consolidation": "ts-node src/test-consolidation.ts",
-    "complete-burn": "ts-node src/complete-burn-tx.ts"
+    "test-rain-api": "ts-node src/test-rain-api.ts"
   },
   "keywords": [
     "blockchain",
@@ -29,12 +26,10 @@
   "description": "Sapphire Test Network event listener for GroupManager contract group creation events",
   "dependencies": {
     "@openzeppelin/contracts": "^4.8.1",
-    "@types/node-cron": "^3.0.11",
     "axios": "^1.10.0",
     "crypto-js": "^4.2.0",
     "dotenv": "^17.0.1",
     "ethers": "^6.10.0",
-    "node-cron": "^4.2.0",
     "uuid": "^11.1.0",
     "viem": "^2.31.7"
   },
