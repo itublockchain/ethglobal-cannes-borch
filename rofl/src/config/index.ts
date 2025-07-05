@@ -14,30 +14,50 @@ export const NETWORK_CONFIGS = {
     }
   },
   sepolia: {
-    name: 'Sepolia',
+    name: 'Ethereum Sepolia',
     rpc: 'https://eth-sepolia.g.alchemy.com/v2/Ta_OkL4eYQiN8sgodiXor400o5sVWgHZ',
     chainId: 11155111,
+    domain: 0,
     contracts: {
-      deposit: '0xacb2d949855dedbe72cc65d6030f3b1390748077',
-      usdc: '0x94a9D9AC8a22534E3FaCa9F4e7F2E2cf85d5e4c8'
+      deposit: '0x5e103637810e96b83205d418d060616382071e28',
+      usdc: '0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238',
+      tokenMessenger: '0x8FE6B999Dc680CcFDD5Bf7EB0974218be2542DAA',
+      messageTransmitter: '0xE737e5cEBEEBa77EFE34D4aa090756590b1CE275'
     }
   },
   baseSepolia: {
     name: 'Base Sepolia',
     rpc: 'https://base-sepolia.g.alchemy.com/v2/Ta_OkL4eYQiN8sgodiXor400o5sVWgHZ',
     chainId: 84532,
+    domain: 6,
     contracts: {
       deposit: '0x5ca0208564f7838e5416b7b061002407896cdd41',
-      usdc: '0x036CbD53842c5426634e7929541eC2318f3dCF7e'
+      usdc: '0x036CbD53842c5426634e7929541eC2318f3dCF7e',
+      tokenMessenger: '0x8FE6B999Dc680CcFDD5Bf7EB0974218be2542DAA',
+      messageTransmitter: '0xE737e5cEBEEBa77EFE34D4aa090756590b1CE275'
     }
   },
   arbSepolia: {
     name: 'Arbitrum Sepolia',
     rpc: 'https://arb-sepolia.g.alchemy.com/v2/Ta_OkL4eYQiN8sgodiXor400o5sVWgHZ',
     chainId: 421614,
+    domain: 3,
     contracts: {
       deposit: '0x2cde5431ba814b8ef713554630490ca495d9bbd9',
-      usdc: '0x75faf114eafb1BDbe2F0316DF893fd58CE46AA4d'
+      usdc: '0x75faf114eafb1BDbe2F0316DF893fd58CE46AA4d',
+      tokenMessenger: '0x8FE6B999Dc680CcFDD5Bf7EB0974218be2542DAA',
+      messageTransmitter: '0xE737e5cEBEEBa77EFE34D4aa090756590b1CE275'
+    }
+  },
+  avalanche: {
+    name: 'Avalanche Fuji',
+    rpc: 'https://api.avax-test.network/ext/bc/C/rpc',
+    chainId: 43113,
+    domain: 1,
+    contracts: {
+      usdc: '0x5425890298aed601595a70AB815c96711a31Bc65',
+      tokenMessenger: '0x8FE6B999Dc680CcFDD5Bf7EB0974218be2542DAA',
+      messageTransmitter: '0xE737e5cEBEEBa77EFE34D4aa090756590b1CE275'
     }
   }
 } as const;

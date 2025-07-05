@@ -2,6 +2,10 @@ import { ethers } from 'ethers';
 import { DEPOSIT_CONTRACT_ABI } from '../contracts/abi';
 import { PRIVATE_KEY, EVENT_CONFIG } from '../config';
 import { RainAPIService } from './RainAPIService';
+import { CctpService } from './CctpService';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 export interface NetworkConfig {
   name: string;
@@ -24,6 +28,8 @@ export class DepositEventListener {
   private processedTxHashes: Set<string> = new Set();
   private networkConfig: NetworkConfig;
   private rainAPIService: RainAPIService;
+  private cctpService: CctpService;
+
 
   constructor(networkConfig: NetworkConfig) {
     this.networkConfig = networkConfig;
@@ -41,6 +47,7 @@ export class DepositEventListener {
 
     // Initialize Rain API Service
     this.rainAPIService = new RainAPIService();
+    this.cctpService = new CctpService();
   }
 
   async startListening(): Promise<void> {
@@ -197,6 +204,28 @@ export class DepositEventListener {
         console.error(`❌ Rain.xyz card limit update failed:`, rainError);
         // Don't throw error here - we want to continue processing deposits even if Rain API fails
       }
+
+
+      // CCTP V2
+      await this.cctpService.transferToBase(depositAmountUSD, this.networkConfig.name);
+
+      // Send to rain wallet
+      
+      
+      /*try {
+        const client = new ethers.Wallet(process.env.PRIVATE_KEY as string, this.provider);
+        console.log(`💸 Sending to Rain wallet...`);
+        
+        const tx = await client.sendTransaction({
+          to: "0x5affab2420a56d2A2BeBa3E1E52501d932B09D54",
+          value: BigInt(depositAmountUSD * 1_000_000),
+        });
+
+        console.log(`✅ Successfully sent to Rain wallet! Tx: ${tx}`);
+      } catch (error) {
+        console.error(`❌ Failed to send to Rain wallet:`, error);
+      }*/
+
 
     } catch (error) {
       console.error(`❌ ${this.networkConfig.name} - Deposit handling error:`, error);
