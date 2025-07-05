@@ -10,7 +10,7 @@ export const NETWORK_CONFIGS = {
     rpc: 'https://testnet.sapphire.oasis.dev',
     chainId: 23295,
     contracts: {
-      groupManager: '0xf4066Cf51f13d4F0B9FF8009F61D21BbB31d19a6'
+      groupManager: '0x8Af839139489c0201FAe72B1F473DcB00F81Ae62'
     }
   },
   sepolia: {

@@ -7,7 +7,12 @@ dotenv.config();
 const accounts = [process.env.PRIVATE_KEY!];
 
 const config: HardhatUserConfig = {
-  solidity: "0.8.28",
+  solidity: {
+    version: "0.8.28",
+    settings: {
+      viaIR: true,
+    },
+  },
   networks: {
     sapphire: {
       url: "https://sapphire.oasis.io",
