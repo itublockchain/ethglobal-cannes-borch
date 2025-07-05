@@ -7,6 +7,7 @@ import { Colors, Spaces } from "@/constants";
 import { getWidth } from "@/constants/Spaces";
 
 import GOOGLE from "@/assets/google.png";
+import ENTRY from "@/assets/entry.png";
 
 type Props = {};
 
@@ -19,18 +20,19 @@ const Auth = (props: Props) => {
     <SafeAreaView style={styles.container}>
       <View style={styles.top_container}>
         <View style={styles.title_container}>
-          <Text style={[Fonts.xxlBlack, styles.title]}>TAILOR YOU FINANCE</Text>
-          <Text style={[Fonts.xxlBlack, styles.title]}>WITH SABIPAY</Text>
+          <Text style={[Fonts.xxxlBlack, styles.title]}>
+            TAILOR YOU FINANCE
+          </Text>
+          <Text style={[Fonts.xxxlBlack, styles.title]}>WITH SABIPAY</Text>
         </View>
         <Image
-          src={
-            "https://cdn.pixabay.com/photo/2022/10/09/12/07/plant-7508987_1280.jpg"
-          }
+          source={ENTRY}
           style={{
             width: Spaces.getWidth() - 48,
             height: 448,
-            marginTop: -14,
+            marginTop: 32,
             zIndex: -1,
+            borderRadius: 30,
           }}
         />
         <Text style={[Fonts.lgRegular, styles.desc]}>
@@ -61,7 +63,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: "center",
-    backgroundColor: Colors.VIOLET_700,
+    backgroundColor: Colors.SURFACE_LIGHT,
   },
   top_container: {
     flex: 1,
@@ -73,7 +75,7 @@ const styles = StyleSheet.create({
   },
   title: {
     lineHeight: 38,
-    color: Colors.WHITE,
+    color: Colors.GRAY_900,
   },
   desc: {
     marginHorizontal: 20,
@@ -82,7 +84,7 @@ const styles = StyleSheet.create({
     marginVertical: 16,
   },
   google_button_container: {
-    backgroundColor: Colors.WHITE,
+    backgroundColor: Colors.GRAY_900,
     borderRadius: 30,
   },
   google_button: {
@@ -95,7 +97,7 @@ const styles = StyleSheet.create({
   google_button_text: {
     fontFamily: Fonts.bold.fontFamily,
     fontSize: 16,
-    color: Colors.GRAY_700,
+    color: Colors.WHITE,
   },
 });
 

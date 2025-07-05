@@ -18,7 +18,8 @@ const FontSize = {
   MD: 16,
   LG: 18,
   XL: 20,
-  XXL: 30,
+  XXL: 24,
+  XXXL: 30,
 };
 
 // Precomputed font styles that can be used directly in StyleSheet
@@ -37,6 +38,7 @@ const Fonts = StyleSheet.create({
   lg: { fontSize: FontSize.LG },
   xl: { fontSize: FontSize.XL },
   xxl: { fontSize: FontSize.XXL },
+  xxxl: { fontSize: FontSize.XXXL },
 
   // Common combinations
   xsLight: { fontSize: FontSize.XS, fontFamily: FontFamily.LIGHT },
@@ -75,6 +77,13 @@ const Fonts = StyleSheet.create({
   xxlSemibold: { fontSize: FontSize.XXL, fontFamily: FontFamily.SEMIBOLD },
   xxlBold: { fontSize: FontSize.XXL, fontFamily: FontFamily.BOLD },
   xxlBlack: { fontSize: FontSize.XXL, fontFamily: FontFamily.BLACK },
+
+  xxxlLight: { fontSize: FontSize.XXXL, fontFamily: FontFamily.LIGHT },
+  xxxlRegular: { fontSize: FontSize.XXXL, fontFamily: FontFamily.REGULAR },
+  xxxlMedium: { fontSize: FontSize.XXXL, fontFamily: FontFamily.MEDIUM },
+  xxxlSemibold: { fontSize: FontSize.XXXL, fontFamily: FontFamily.SEMIBOLD },
+  xxxlBold: { fontSize: FontSize.XXXL, fontFamily: FontFamily.BOLD },
+  xxxlBlack: { fontSize: FontSize.XXXL, fontFamily: FontFamily.BLACK },
 });
 
 export { FontFamily, FontSize, Fonts };

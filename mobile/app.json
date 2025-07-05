@@ -4,7 +4,10 @@
     "slug": "facade",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": {
+      "src": "./assets/icon.png",
+      "backgroundColor": "#f8fbf4"
+    },
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "scheme": "facade",
@@ -27,8 +30,14 @@
       [
         "expo-splash-screen",
         {
-          "backgroundColor": "#ffffff",
+          "backgroundColor": "#f8fbf4",
           "image": "./assets/splash-icon.png"
+        }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "The app accesses your photos to let you share them with your friends."
         }
       ],
       "react-native-edge-to-edge",

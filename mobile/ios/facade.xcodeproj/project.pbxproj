@@ -354,7 +354,7 @@
 					"FB_SONARKIT_ENABLED=1",
 				);
 				INFOPLIST_FILE = facade/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = facade;
+				INFOPLIST_KEY_CFBundleDisplayName = borch;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.finance";
 				IPHONEOS_DEPLOYMENT_TARGET = 15.1;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -369,7 +369,7 @@
 				);
 				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_DEBUG";
 				PRODUCT_BUNDLE_IDENTIFIER = finance.facade;
-				PRODUCT_NAME = facade;
+				PRODUCT_NAME = "facade";
 				SWIFT_OBJC_BRIDGING_HEADER = "facade/facade-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
@@ -388,7 +388,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = D2TQ5H7GQ6;
 				INFOPLIST_FILE = facade/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = facade;
+				INFOPLIST_KEY_CFBundleDisplayName = borch;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.finance";
 				IPHONEOS_DEPLOYMENT_TARGET = 15.1;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -403,7 +403,7 @@
 				);
 				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_RELEASE";
 				PRODUCT_BUNDLE_IDENTIFIER = finance.facade;
-				PRODUCT_NAME = facade;
+				PRODUCT_NAME = "facade";
 				SWIFT_OBJC_BRIDGING_HEADER = "facade/facade-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
