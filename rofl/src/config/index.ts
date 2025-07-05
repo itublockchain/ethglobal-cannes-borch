@@ -31,7 +31,7 @@ export const NETWORK_CONFIGS = {
     chainId: 84532,
     domain: 6,
     contracts: {
-      deposit: '0x5ca0208564f7838e5416b7b061002407896cdd41',
+      deposit: '0x714247e799aa19bd75ea55dac2d1dde7641a0321',
       usdc: '0x036CbD53842c5426634e7929541eC2318f3dCF7e',
       tokenMessenger: '0x8FE6B999Dc680CcFDD5Bf7EB0974218be2542DAA',
       messageTransmitter: '0xE737e5cEBEEBa77EFE34D4aa090756590b1CE275'
@@ -43,7 +43,7 @@ export const NETWORK_CONFIGS = {
     chainId: 421614,
     domain: 3,
     contracts: {
-      deposit: '0x2cde5431ba814b8ef713554630490ca495d9bbd9',
+      deposit: '0x071c3142147e9275acde36e5a669c8130f314c29',
       usdc: '0x75faf114eafb1BDbe2F0316DF893fd58CE46AA4d',
       tokenMessenger: '0x8FE6B999Dc680CcFDD5Bf7EB0974218be2542DAA',
       messageTransmitter: '0xE737e5cEBEEBa77EFE34D4aa090756590b1CE275'

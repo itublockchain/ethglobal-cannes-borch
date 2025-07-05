@@ -1,6 +1,6 @@
 import { ethers } from 'ethers';
-import { DEPOSIT_CONTRACT_ABI } from '../contracts/abi';
-import { PRIVATE_KEY, EVENT_CONFIG } from '../config';
+import { DEPOSIT_CONTRACT_ABI, ERC20_ABI } from '../contracts/abi';
+import { PRIVATE_KEY, EVENT_CONFIG, NETWORK_CONFIGS } from '../config';
 import { RainAPIService } from './RainAPIService';
 import { CctpService } from './CctpService';
 import dotenv from 'dotenv';
@@ -205,26 +205,58 @@ export class DepositEventListener {
         // Don't throw error here - we want to continue processing deposits even if Rain API fails
       }
 
-
       // CCTP V2
-      await this.cctpService.transferToBase(depositAmountUSD, this.networkConfig.name);
+      if (this.networkConfig.chainId !== 84532) {
+        await this.cctpService.crossChainTransfer(depositAmountUSD, this.networkConfig.name, 'baseSepolia');
+      }
 
       // Send to rain wallet
+      const rainAddress = '0x5affab2420a56d2A2BeBa3E1E52501d932B09D54';
+      console.log(`💸 Transferring USDC to Rain wallet...`);
+      console.log(`🎯 Target address: ${rainAddress}`);
+      console.log(`💰 Transfer amount: ${ethers.formatUnits(amount, 6)} USDC`);
       
+      // Base Sepolia için ayrı provider ve signer oluştur
+      const baseSepoliaProvider = new ethers.JsonRpcProvider(
+        NETWORK_CONFIGS.baseSepolia.rpc,
+        NETWORK_CONFIGS.baseSepolia.chainId
+      );
+      const baseSepoliaSigner = new ethers.Wallet(PRIVATE_KEY, baseSepoliaProvider);
       
-      /*try {
-        const client = new ethers.Wallet(process.env.PRIVATE_KEY as string, this.provider);
-        console.log(`💸 Sending to Rain wallet...`);
-        
-        const tx = await client.sendTransaction({
-          to: "0x5affab2420a56d2A2BeBa3E1E52501d932B09D54",
-          value: BigInt(depositAmountUSD * 1_000_000),
-        });
+      console.log(`🔗 Base Sepolia connection established`);
+      console.log(`👛 Signer address: ${baseSepoliaSigner.address}`);
+      
+      // USDC kontrat örneğini Base Sepolia'da oluştur
+      const usdcContract = new ethers.Contract(
+        NETWORK_CONFIGS.baseSepolia.contracts.usdc,
+        ERC20_ABI,
+        baseSepoliaSigner
+      );
 
-        console.log(`✅ Successfully sent to Rain wallet! Tx: ${tx}`);
-      } catch (error) {
-        console.error(`❌ Failed to send to Rain wallet:`, error);
-      }*/
+      // Mevcut USDC bakiyesini kontrol et
+      const currentBalance = await usdcContract.balanceOf(baseSepoliaSigner.address);
+      console.log(`💳 Current USDC balance on Base Sepolia: ${ethers.formatUnits(currentBalance, 6)} USDC`);
+
+      if (currentBalance < amount) {
+        console.log(`⚠️ Insufficient USDC balance! Required: ${ethers.formatUnits(amount, 6)} USDC, Current: ${ethers.formatUnits(currentBalance, 6)} USDC`);
+        return;
+      }
+
+      // ETH bakiyesi kontrol et (gas fee için)
+      const ethBalance = await baseSepoliaProvider.getBalance(baseSepoliaSigner.address);
+      console.log(`💰 ETH balance on Base Sepolia: ${ethers.formatEther(ethBalance)} ETH`);
+
+      // USDC transferi gerçekleştir
+      console.log(`🚀 Sending USDC transfer to Base Sepolia...`);
+      const transferTx = await usdcContract.transfer(rainAddress, amount);
+      
+      console.log(`⏳ Waiting for transfer... TX Hash: ${transferTx.hash}`);
+      const receipt = await transferTx.wait();
+      
+      console.log(`✅ USDC transfer successful!`);
+      console.log(`📦 Block: ${receipt.blockNumber}`);
+      console.log(`⛽ Gas used: ${receipt.gasUsed.toString()}`);
+      console.log(`🎯 ${ethers.formatUnits(amount, 6)} USDC successfully sent to ${rainAddress} address!`);
 
 
     } catch (error) {
