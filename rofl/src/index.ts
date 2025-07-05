@@ -6,6 +6,8 @@ export * from './services/GroupEventListener';
 export * from './services/DepositEventListener';
 export * from './services/MultiNetworkEventListener';
 export * from './services/RainAPIService';
+export * from './services/CctpService';
+export * from './services/UsdcConsolidationService';
 export * from './utils/cardGenerator';
 export * from './test-deposit';
 

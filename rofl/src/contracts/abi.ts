@@ -271,4 +271,73 @@ export const ERC20_ABI = [
     ],
     "stateMutability": "view"
   }
+] as const;
+
+// CCTP TokenMessenger ABI (V2)
+export const TOKEN_MESSENGER_ABI = [
+  {
+    "type": "function",
+    "name": "depositForBurn",
+    "inputs": [
+      {
+        "name": "amount",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "destinationDomain",
+        "type": "uint32",
+        "internalType": "uint32"
+      },
+      {
+        "name": "mintRecipient",
+        "type": "bytes32",
+        "internalType": "bytes32"
+      },
+      {
+        "name": "burnToken",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "destinationCaller",
+        "type": "bytes32",
+        "internalType": "bytes32"
+      },
+      {
+        "name": "maxFee",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "minFinalityThreshold",
+        "type": "uint32",
+        "internalType": "uint32"
+      }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  }
+] as const;
+
+// CCTP MessageTransmitter ABI
+export const MESSAGE_TRANSMITTER_ABI = [
+  {
+    "type": "function",
+    "name": "receiveMessage",
+    "inputs": [
+      {
+        "name": "message",
+        "type": "bytes",
+        "internalType": "bytes"
+      },
+      {
+        "name": "attestation",
+        "type": "bytes",
+        "internalType": "bytes"
+      }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  }
 ] as const; 

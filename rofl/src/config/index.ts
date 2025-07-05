@@ -19,8 +19,11 @@ export const NETWORK_CONFIGS = {
     chainId: 11155111,
     contracts: {
       deposit: '0xacb2d949855dedbe72cc65d6030f3b1390748077',
-      usdc: '0x94a9D9AC8a22534E3FaCa9F4e7F2E2cf85d5e4c8'
-    }
+      usdc: '0x1c7d4b196cb0c7b01d743fbc6116a902379c7238',
+      tokenMessenger: '0x8FE6B999Dc680CcFDD5Bf7EB0974218be2542DAA',
+      messageTransmitter: '0xE737e5cEBEEBa77EFE34D4aa090756590b1CE275'
+    },
+    cctpDomain: 0
   },
   baseSepolia: {
     name: 'Base Sepolia',
@@ -28,8 +31,11 @@ export const NETWORK_CONFIGS = {
     chainId: 84532,
     contracts: {
       deposit: '0x5ca0208564f7838e5416b7b061002407896cdd41',
-      usdc: '0x036CbD53842c5426634e7929541eC2318f3dCF7e'
-    }
+      usdc: '0x036CbD53842c5426634e7929541eC2318f3dCF7e',
+      tokenMessenger: '0x8FE6B999Dc680CcFDD5Bf7EB0974218be2542DAA',
+      messageTransmitter: '0xE737e5cEBEEBa77EFE34D4aa090756590b1CE275'
+    },
+    cctpDomain: 6
   },
   arbSepolia: {
     name: 'Arbitrum Sepolia',
@@ -37,8 +43,11 @@ export const NETWORK_CONFIGS = {
     chainId: 421614,
     contracts: {
       deposit: '0x2cde5431ba814b8ef713554630490ca495d9bbd9',
-      usdc: '0x75faf114eafb1BDbe2F0316DF893fd58CE46AA4d'
-    }
+      usdc: '0x75faf114eafb1BDbe2F0316DF893fd58CE46AA4d',
+      tokenMessenger: '0x8FE6B999Dc680CcFDD5Bf7EB0974218be2542DAA',
+      messageTransmitter: '0xE737e5cEBEEBa77EFE34D4aa090756590b1CE275'
+    },
+    cctpDomain: 3
   }
 } as const;
 
@@ -66,4 +75,15 @@ export const RAIN_API_CONFIG = {
   CARDHOLDER_USER_ID: process.env.RAIN_CARDHOLDER_USER_ID || '',
   FIRST_NAME: process.env.RAIN_FIRST_NAME || '',
   LAST_NAME: process.env.RAIN_LAST_NAME || '',
-}; 
+};
+
+// CCTP Configuration
+export const CCTP_CONFIG = {
+  TARGET_NETWORK: 'baseSepolia', // USDC'lerin toplanacağı hedef ağ
+  MIN_TRANSFER_AMOUNT: '1000000', // 1 USDC (6 decimals)
+  MAX_FEE: '5000', // 0.005 USDC
+  MIN_FINALITY_THRESHOLD: 2000, // Standard Transfer (finalized)
+  ATTESTATION_API_URL: 'https://iris-api-sandbox.circle.com/v2/messages',
+  ATTESTATION_POLL_INTERVAL: 5000, // 5 saniye
+  ATTESTATION_TIMEOUT: 600000, // 10 dakika
+} as const; 
