@@ -5,8 +5,20 @@ dotenv.config();
 
 // Sapphire Test Network configuration
 export const SAPPHIRE_TESTNET_RPC = 'https://testnet.sapphire.oasis.dev';
-export const CONTRACT_ADDRESS = '0x2eD20138F1C03b29939f01B4989e6e7927E3920a';
+export const CONTRACT_ADDRESS = '0xf4066Cf51f13d4F0B9FF8009F61D21BbB31d19a6';
 export const PRIVATE_KEY = process.env.PRIVATE_KEY || '';
+
+// Rain.xyz API configuration
+export const RAIN_API_CONFIG = {
+  API_BASE: 'https://api.rain.xyz',
+  AUTH_TOKEN: process.env.RAIN_AUTH_TOKEN || '',
+  SESSION_COOKIE: process.env.RAIN_SESSION_COOKIE || '',
+  CSRF_TOKEN: process.env.RAIN_CSRF_TOKEN || '',
+  CARDHOLDER_ID: process.env.RAIN_CARDHOLDER_ID || '',
+  CARDHOLDER_USER_ID: process.env.RAIN_CARDHOLDER_USER_ID || '',
+  FIRST_NAME: process.env.RAIN_FIRST_NAME || '',
+  LAST_NAME: process.env.RAIN_LAST_NAME || '',
+};
 
 // Event listener configuration
 export const EVENT_CONFIG = {

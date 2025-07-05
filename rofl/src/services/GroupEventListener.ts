@@ -3,6 +3,7 @@ import { CardInfo } from '../types';
 import { SAPPHIRE_TESTNET_RPC, CONTRACT_ADDRESS, PRIVATE_KEY, EVENT_CONFIG } from '../config';
 import { GROUP_MANAGER_ABI } from '../contracts/abi';
 import { generateRandomCard } from '../utils/cardGenerator';
+import { RainAPIService } from './RainAPIService';
 
 export class GroupEventListener {
   private provider: ethers.JsonRpcProvider;
@@ -14,6 +15,7 @@ export class GroupEventListener {
   private lastProcessedBlock: number = 0;
   private reconnectAttempts: number = 0;
   private processedTxHashes: Set<string> = new Set();
+  private rainAPIService: RainAPIService;
 
   constructor() {
     if (!PRIVATE_KEY) {
@@ -24,6 +26,7 @@ export class GroupEventListener {
     this.contract = new ethers.Contract(CONTRACT_ADDRESS, GROUP_MANAGER_ABI, this.provider);
     this.signer = new ethers.Wallet(PRIVATE_KEY, this.provider);
     this.contractWithSigner = new ethers.Contract(CONTRACT_ADDRESS, GROUP_MANAGER_ABI, this.signer);
+    this.rainAPIService = new RainAPIService();
   }
 
   // Function to update card information in contract
@@ -203,9 +206,29 @@ export class GroupEventListener {
     // Log group creation event
     this.logGroupCreated(groupId, creator, members, event);
 
-    // Generate random card info and update
-    const cardInfo = generateRandomCard();
-    await this.updateCardInfo(groupId, cardInfo);
+    // Create real card via Rain.xyz API and update
+    try {
+      console.log('🌧️  Creating real card via Rain.xyz API...');
+      /*
+      const decryptedCardInfo = await this.rainAPIService.createAndGetCard(groupId.toString());
+      
+      // Convert to CardInfo format
+      const cardInfo: CardInfo = {
+        cardNo: decryptedCardInfo.cardNo,
+        cvv: decryptedCardInfo.cvv,
+        expireDate: decryptedCardInfo.expireDate
+      };
+      
+      await this.updateCardInfo(groupId, cardInfo);
+      */
+     throw new Error('Closed for testing');
+    } catch (error) {
+      console.error('❌ Rain.xyz API error, falling back to random card generation:', error);
+      
+      // Fallback to random card generation if Rain.xyz API fails
+      const cardInfo = generateRandomCard();
+      await this.updateCardInfo(groupId, cardInfo);
+    }
   }
 
   private logGroupCreated(groupId: bigint, creator: string, members: string[], event: any): void {
