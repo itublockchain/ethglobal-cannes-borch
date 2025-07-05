@@ -2,7 +2,15 @@ const Colors = {
   WHITE: "#FFFFFF",
   PRIMARY_500: "#669F2A",
   VIOLET_700: "#6927DA",
+  GRAY_900: "#101828",
+  GRAY_800: "#1D2939",
   GRAY_700: "#344054",
+  GRAY_500: "#667085",
+  GRAY_400: "#98A2B3",
+  GRAY_200: "#EAECF0",
+  ERROR_500: "#F04438",
+  PRIMARY_300: "#ACDC79",
+  SURFACE_LIGHT: "#F8FBF4",
 };
 
 export default Colors;
