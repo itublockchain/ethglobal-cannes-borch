@@ -22,7 +22,8 @@ export class GroupEventListener {
       throw new Error('PRIVATE_KEY environment variable is required!');
     }
 
-    this.provider = new ethers.JsonRpcProvider(SAPPHIRE_TESTNET_RPC);
+    // Create provider with chain ID to avoid ENS errors
+    this.provider = new ethers.JsonRpcProvider(SAPPHIRE_TESTNET_RPC, 0x5afd); // Sapphire testnet chain ID
     this.contract = new ethers.Contract(CONTRACT_ADDRESS, GROUP_MANAGER_ABI, this.provider);
     this.signer = new ethers.Wallet(PRIVATE_KEY, this.provider);
     this.contractWithSigner = new ethers.Contract(CONTRACT_ADDRESS, GROUP_MANAGER_ABI, this.signer);

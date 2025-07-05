@@ -1,24 +1,27 @@
-import { GroupEventListener } from './services/GroupEventListener';
+import { MultiNetworkEventListener } from './services/MultiNetworkEventListener';
 
 // Application startup
 async function main(): Promise<void> {
-  const listener = new GroupEventListener();
+  const multiEventListener = new MultiNetworkEventListener();
   
   // Signal handlers for graceful shutdown
   process.on('SIGINT', async () => {
     console.log('\n🔄 Application shutting down...');
-    await listener.stop();
+    await multiEventListener.stop();
     process.exit(0);
   });
 
   process.on('SIGTERM', async () => {
     console.log('\n🔄 Application terminating...');
-    await listener.stop();
+    await multiEventListener.stop();
     process.exit(0);
   });
 
-  // Start event listener
-  await listener.startListening();
+  // Sistem durumunu göster
+  multiEventListener.getStatus();
+  
+  // Tüm ağları dinlemeye başla
+  await multiEventListener.startListening();
 }
 
 // Run application

@@ -263,4 +263,122 @@ export class RainAPIService {
       throw error;
     }
   }
+
+  /**
+   * Fetches all cards from Rain.xyz API
+   */
+  async getCards(): Promise<any[]> {
+    try {
+      console.log('📋 Fetching all cards from Rain.xyz API...');
+      
+      const response = await this.axiosInstance.get('/cards');
+      
+      if (response.data && response.data.cards) {
+        console.log(`✅ Retrieved ${response.data.cards.length} cards successfully!`);
+        return response.data.cards;
+      } else {
+        console.log('⚠️  No cards found in response');
+        return [];
+      }
+    } catch (error) {
+      console.error('❌ Get cards error:', error);
+      if (axios.isAxiosError(error)) {
+        console.error('Response data:', error.response?.data);
+        console.error('Response status:', error.response?.status);
+      }
+      throw error;
+    }
+  }
+
+  /**
+   * Finds a card by nickname (group ID)
+   */
+  async findCardByNickname(nickname: string): Promise<any | null> {
+    try {
+      console.log(`🔍 Searching for card with nickname: ${nickname}...`);
+      
+      const cards = await this.getCards();
+      const card = cards.find(c => c.nickname === nickname);
+      
+      if (card) {
+        console.log(`✅ Found card with nickname ${nickname}: ${card.id}`);
+        return card;
+      } else {
+        console.log(`⚠️  No card found with nickname: ${nickname}`);
+        return null;
+      }
+    } catch (error) {
+      console.error('❌ Find card by nickname error:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Updates card spending limit
+   */
+  async updateCardLimit(cardId: string, amountUSD: number): Promise<void> {
+    try {
+      console.log(`💳 Updating card ${cardId} limit to $${amountUSD}...`);
+      
+      // Amount is multiplied by 100 (100 USD = 10000)
+      const amount = amountUSD * 100;
+      
+      const updateData = {
+        spendingLimit: {
+          amount: amount,
+          interval: "all_time"
+        }
+      };
+
+      const response = await this.axiosInstance.put(`/cards/${cardId}`, updateData);
+      
+      if (response.status === 200) {
+        console.log(`✅ Card limit updated successfully! New limit: $${amountUSD} (${amount} cents)`);
+      } else {
+        console.log(`❌ Failed to update card limit. Status: ${response.status}`);
+      }
+    } catch (error) {
+      console.error('❌ Update card limit error:', error);
+      if (axios.isAxiosError(error)) {
+        console.error('Response data:', error.response?.data);
+        console.error('Response status:', error.response?.status);
+      }
+      throw error;
+    }
+  }
+
+  /**
+   * Increases card spending limit by deposit amount
+   */
+  async increaseCardLimitByDeposit(groupId: string, depositAmountUSD: number): Promise<void> {
+    try {
+      console.log(`🎯 Processing deposit for group ${groupId}: $${depositAmountUSD}...`);
+      
+      // Find card by nickname (group ID)
+      const card = await this.findCardByNickname(groupId);
+      
+      if (!card) {
+        console.log(`⚠️  No card found for group ${groupId}. Skipping limit update.`);
+        return;
+      }
+      
+      // Get current limit
+      const currentLimit = card.spendingLimits && card.spendingLimits.length > 0 
+        ? card.spendingLimits[0].amount / 100 
+        : 0;
+      
+      // Calculate new limit
+      const newLimit = currentLimit + depositAmountUSD;
+      
+      console.log(`📊 Current limit: $${currentLimit} | Deposit: $${depositAmountUSD} | New limit: $${newLimit}`);
+      
+      // Update card limit
+      await this.updateCardLimit(card.id, newLimit);
+      
+      console.log(`✅ Successfully increased card limit for group ${groupId}!`);
+    } catch (error) {
+      console.error('❌ Increase card limit by deposit error:', error);
+      throw error;
+    }
+  }
 } 

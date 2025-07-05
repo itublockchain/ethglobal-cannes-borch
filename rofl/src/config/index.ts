@@ -3,9 +3,57 @@ import * as dotenv from 'dotenv';
 // Load environment variables
 dotenv.config();
 
-// Sapphire Test Network configuration
-export const SAPPHIRE_TESTNET_RPC = 'https://testnet.sapphire.oasis.dev';
-export const CONTRACT_ADDRESS = '0xf4066Cf51f13d4F0B9FF8009F61D21BbB31d19a6';
+// Multi-network configuration
+export const NETWORK_CONFIGS = {
+  sapphire: {
+    name: 'Sapphire Testnet',
+    rpc: 'https://testnet.sapphire.oasis.dev',
+    chainId: 23295,
+    contracts: {
+      groupManager: '0xf4066Cf51f13d4F0B9FF8009F61D21BbB31d19a6'
+    }
+  },
+  sepolia: {
+    name: 'Sepolia',
+    rpc: 'https://eth-sepolia.g.alchemy.com/v2/Ta_OkL4eYQiN8sgodiXor400o5sVWgHZ',
+    chainId: 11155111,
+    contracts: {
+      deposit: '0xacb2d949855dedbe72cc65d6030f3b1390748077',
+      usdc: '0x94a9D9AC8a22534E3FaCa9F4e7F2E2cf85d5e4c8'
+    }
+  },
+  baseSepolia: {
+    name: 'Base Sepolia',
+    rpc: 'https://base-sepolia.g.alchemy.com/v2/Ta_OkL4eYQiN8sgodiXor400o5sVWgHZ',
+    chainId: 84532,
+    contracts: {
+      deposit: '0x5ca0208564f7838e5416b7b061002407896cdd41',
+      usdc: '0x036CbD53842c5426634e7929541eC2318f3dCF7e'
+    }
+  },
+  arbSepolia: {
+    name: 'Arbitrum Sepolia',
+    rpc: 'https://arb-sepolia.g.alchemy.com/v2/Ta_OkL4eYQiN8sgodiXor400o5sVWgHZ',
+    chainId: 421614,
+    contracts: {
+      deposit: '0x2cde5431ba814b8ef713554630490ca495d9bbd9',
+      usdc: '0x75faf114eafb1BDbe2F0316DF893fd58CE46AA4d'
+    }
+  }
+} as const;
+
+// Event listener configuration
+export const EVENT_CONFIG = {
+  POLL_INTERVAL_MS: 3000, // 3 seconds (faster)
+  MAX_RECONNECT_ATTEMPTS: 5,
+  RECONNECT_DELAY: 5000,
+  MAX_BLOCK_RANGE: 1000,
+  MAX_PROCESSED_TX_HASHES: 10000,
+};
+
+// Backward compatibility - şu anki GroupEventListener için
+export const SAPPHIRE_TESTNET_RPC = NETWORK_CONFIGS.sapphire.rpc;
+export const CONTRACT_ADDRESS = NETWORK_CONFIGS.sapphire.contracts.groupManager;
 export const PRIVATE_KEY = process.env.PRIVATE_KEY || '';
 
 // Rain.xyz API configuration
@@ -18,13 +66,4 @@ export const RAIN_API_CONFIG = {
   CARDHOLDER_USER_ID: process.env.RAIN_CARDHOLDER_USER_ID || '',
   FIRST_NAME: process.env.RAIN_FIRST_NAME || '',
   LAST_NAME: process.env.RAIN_LAST_NAME || '',
-};
-
-// Event listener configuration
-export const EVENT_CONFIG = {
-  POLL_INTERVAL_MS: 3000, // 3 seconds (faster)
-  MAX_RECONNECT_ATTEMPTS: 5,
-  RECONNECT_DELAY: 5000,
-  MAX_BLOCK_RANGE: 1000,
-  MAX_PROCESSED_TX_HASHES: 10000,
 }; 
