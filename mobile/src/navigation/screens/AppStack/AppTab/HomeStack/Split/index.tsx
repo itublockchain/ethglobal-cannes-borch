@@ -182,7 +182,7 @@ const Split: React.FC = () => {
           disabled={leftover !== 0 || people.every((p) => !p.included)}
         >
           <Text style={[Fonts.mdMedium, styles.confirmButtonText]}>
-            Create Group
+            Split Expense
           </Text>
         </Pressable>
       </ScrollView>

@@ -21,6 +21,9 @@ import Fonts from "@/constants/Fonts";
 import LEFT from "@/assets/left.png";
 import VISA from "@/assets/VISA.png";
 import CARD from "@/assets/cardbg.png";
+import PLUS from "@/assets/plus.png";
+import EYE from "@/assets/eye.png";
+import EYE_OFF from "@/assets/eye-off.png";
 
 const transactions = [
   {
@@ -79,6 +82,13 @@ const Group = (props: Props) => {
   const { auth } = useDynamic();
   const navigation =
     useNavigation<NativeStackNavigationProp<AppStackParamList>>();
+
+  const [reveal, setReveal] = React.useState(false);
+
+  const maskedNumber = "**** **** **** ****";
+  const maskedDate = "**/**";
+  const maskedCvc = "***";
+  const maskedName = "************";
 
   const renderTransaction = ({ item }) => (
     <Pressable
@@ -141,14 +151,61 @@ const Group = (props: Props) => {
           />
         </View>
         <View style={styles.cerdit_card_number_container}>
-          <Text style={styles.cerdit_card_number}>4444 4444 4444 4444</Text>
+          <Text style={styles.cerdit_card_number}>
+            {reveal ? "4444 4444 4444 4444" : maskedNumber}
+          </Text>
         </View>
         <View style={styles.cerdit_card_information_container}>
-          <Text style={styles.cerdit_card_name}>BERIL BEKTAS</Text>
+          <Text style={styles.cerdit_card_name}>
+            {reveal ? "BERIL BEKTAS" : maskedName}
+          </Text>
           <View style={styles.cerdit_card_date_cvc_container}>
-            <Text style={styles.cerdit_card_date}>02/27</Text>
-            <Text style={styles.cerdit_card_cvc}>163</Text>
+            <Text style={styles.cerdit_card_date}>
+              {reveal ? "02/27" : maskedDate}
+            </Text>
+            <Text style={styles.cerdit_card_cvc}>
+              {reveal ? "163" : maskedCvc}
+            </Text>
           </View>
+        </View>
+        <Pressable
+          style={styles.eye_button}
+          onPressIn={() => setReveal(true)}
+          onPressOut={() => setReveal(false)}
+        >
+          <Image
+            source={reveal ? EYE_OFF : EYE}
+            style={{ width: 22, height: 22, tintColor: Colors.WHITE }}
+          />
+        </Pressable>
+      </View>
+      <Text style={styles.members_header}>Members</Text>
+      <View style={styles.members_container}>
+        <View style={styles.member}>
+          <Image source={PLUS} style={styles.add_member_icon} />
+          <Text>Add</Text>
+        </View>
+        <View style={styles.divider}></View>
+        <View style={styles.member}>
+          <Image
+            source={{ uri: "https://avatar.iran.liara.run/public" }}
+            style={styles.avatar}
+          />
+          <Text>exTypen</Text>
+        </View>
+        <View style={styles.member}>
+          <Image
+            source={{ uri: "https://avatar.iran.liara.run/public" }}
+            style={styles.avatar}
+          />
+          <Text>exTypen</Text>
+        </View>
+        <View style={styles.member}>
+          <Image
+            source={{ uri: "https://avatar.iran.liara.run/public" }}
+            style={styles.avatar}
+          />
+          <Text>exTypen</Text>
         </View>
       </View>
 
@@ -306,6 +363,38 @@ const styles = StyleSheet.create({
   red: {
     color: Colors.ERROR_500,
   },
+  members_header: {
+    ...Fonts.mdSemibold,
+    color: Colors.GRAY_900,
+    marginLeft: getWidth(20),
+    marginBottom: getHeight(8),
+  },
+  add_member_icon: {
+    width: 44,
+    height: 44,
+    tintColor: Colors.GRAY_500,
+  },
+  members_container: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 24,
+    paddingVertical: getHeight(8),
+    paddingHorizontal: getWidth(20),
+  },
+  add_member: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+  },
+  divider: {
+    width: 2,
+    height: getHeight(50),
+    backgroundColor: Colors.GRAY_200,
+  },
+  member: {
+    alignItems: "center",
+    gap: 8,
+  },
   transactions_container: {
     flex: 1,
     backgroundColor: Colors.SURFACE_LIGHT,
@@ -313,7 +402,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: getWidth(20),
   },
   section_title: {
-    ...Fonts.smallMedium,
+    ...Fonts.mdSemibold,
     color: Colors.GRAY_900,
     marginBottom: 8,
   },
@@ -341,6 +430,12 @@ const styles = StyleSheet.create({
   separator: {
     height: 1,
     backgroundColor: Colors.GRAY_200,
+  },
+  eye_button: {
+    position: "absolute",
+    top: 16,
+    right: 16,
+    padding: 6,
   },
 });
 
