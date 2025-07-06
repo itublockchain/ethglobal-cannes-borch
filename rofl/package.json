@@ -5,12 +5,7 @@
   "scripts": {
     "build": "tsc",
     "start": "node dist/index.js",
-    "dev": "ts-node src/index.ts",
-    "test": "ts-node src/test.ts",
-    "test2": "ts-node src/test2.ts",
-    "test-multi": "ts-node src/test-multi.ts",
-    "test-deposit": "ts-node src/test-deposit.ts",
-    "test-rain-api": "ts-node src/test-rain-api.ts"
+    "dev": "ts-node src/index.ts"
   },
   "keywords": [
     "blockchain",

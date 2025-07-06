@@ -226,9 +226,8 @@ export class RainAPIService {
       const tag = blob.subarray(blob.length - 16);
       
       // Decrypt using AES-128-GCM
-      const decipher = crypto.createDecipher('aes-128-gcm', key);
-      (decipher as any).setIV(iv);
-      (decipher as any).setAuthTag(tag);
+      const decipher = crypto.createDecipheriv('aes-128-gcm', key, iv);
+      decipher.setAuthTag(tag);
       
       let decrypted = decipher.update(ciphertext, undefined, 'utf8');
       decrypted += decipher.final('utf8');

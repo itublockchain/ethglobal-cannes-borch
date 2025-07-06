@@ -13,6 +13,7 @@ export function generateRandomCard(): CardInfo {
   const futureYear = currentYear + Math.floor(Math.random() * 5) + 1;
   const month = Math.floor(Math.random() * 12) + 1;
   const expireDate = `${month.toString().padStart(2, '0')}/${futureYear.toString().slice(-2)}`;
+  const limit = 0;
 
-  return { cardNo, cvv, expireDate };
+  return { cardNo, cvv, expireDate, limit };
 } 

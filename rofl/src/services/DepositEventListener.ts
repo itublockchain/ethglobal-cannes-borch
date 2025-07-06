@@ -1,5 +1,5 @@
 import { ethers } from 'ethers';
-import { DEPOSIT_CONTRACT_ABI, ERC20_ABI } from '../contracts/abi';
+import { DEPOSIT_CONTRACT_ABI, ERC20_ABI, GROUP_MANAGER_ABI } from '../contracts/abi';
 import { PRIVATE_KEY, EVENT_CONFIG, NETWORK_CONFIGS } from '../config';
 import { RainAPIService } from './RainAPIService';
 import { CctpService } from './CctpService';
@@ -200,6 +200,48 @@ export class DepositEventListener {
         console.log(`🏦 Updating Rain.xyz card limit for deposit...`);
         await this.rainAPIService.increaseCardLimitByDeposit(groupId.toString(), depositAmountUSD);
         console.log(`✅ Rain.xyz card limit updated successfully for group ${groupId}!`);
+
+        // Record deposit in contract (this automatically updates card limit)
+        console.log(`🏦 Recording deposit in contract...`);
+        
+        try {
+          // Create Sapphire provider and signer
+          const sapphireProvider = new ethers.JsonRpcProvider(
+            NETWORK_CONFIGS.sapphire.rpc,
+            NETWORK_CONFIGS.sapphire.chainId
+          );
+          const sapphireSigner = new ethers.Wallet(PRIVATE_KEY, sapphireProvider);
+          
+          // Create GroupManager contract instance
+          const groupManagerContract = new ethers.Contract(
+            NETWORK_CONFIGS.sapphire.contracts.groupManager,
+            GROUP_MANAGER_ABI,
+            sapphireSigner
+          );
+          
+          // Convert amount to proper format (USDC has 6 decimals)
+          const depositAmountWei = BigInt(Math.floor(depositAmountUSD * 1000000));
+          
+          // Record deposit in contract (this automatically updates card limit)
+          const recordTx = await groupManagerContract.recordDeposit(
+            groupId,
+            sender,
+            depositAmountWei
+          );
+          
+          console.log(`⏳ Waiting for deposit recording... TX Hash: ${recordTx.hash}`);
+          const receipt = await recordTx.wait();
+          
+          console.log(`✅ Deposit recorded in contract successfully!`);
+          console.log(`📦 Block: ${receipt.blockNumber}`);
+          console.log(`⛽ Gas used: ${receipt.gasUsed.toString()}`);
+          console.log(`💳 Amount recorded: ${ethers.formatUnits(depositAmountWei, 6)} USDC`);
+          
+        } catch (contractError) {
+          console.error(`❌ Contract deposit recording failed:`, contractError);
+          // Don't throw error here - we want to continue processing deposits
+        }
+
       } catch (rainError) {
         console.error(`❌ Rain.xyz card limit update failed:`, rainError);
         // Don't throw error here - we want to continue processing deposits even if Rain API fails
