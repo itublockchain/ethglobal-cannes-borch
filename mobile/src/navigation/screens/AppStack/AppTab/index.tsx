@@ -30,7 +30,7 @@ const CustomTabBar = ({ state, navigation }) => {
   return (
     <View style={styles.container}>
       {/* Blur arka plan */}
-      <BlurView intensity={50} tint="light" style={StyleSheet.absoluteFill} />
+      <BlurView intensity={4} tint="light" style={StyleSheet.absoluteFill} />
 
       <View style={styles.tabBar}>
         {state.routes.map((route, index) => {
@@ -133,6 +133,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     backgroundColor: "#101828",
     marginHorizontal: 20,
+    marginTop: 24,
     marginBottom: 24,
     borderRadius: 50,
     paddingVertical: 14,

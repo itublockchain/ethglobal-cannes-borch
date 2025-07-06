@@ -3,6 +3,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 // Screens
 import Home from "./Home";
 import Group from "./Group";
+import Split from "./Split";
 
 const Stack = createNativeStackNavigator();
 
@@ -13,6 +14,12 @@ export default function HomeStack() {
       initialRouteName="Home"
     >
       <Stack.Screen name="Home" component={Home} />
+      <Stack.Screen
+        name="Split"
+        //@ts-ignore
+        component={Split} // Replace with actual Split screen component
+        initialParams={{ groupId: undefined }} // Adjust as needed
+      />
       <Stack.Screen
         name="Group"
         //@ts-ignore
@@ -25,5 +32,6 @@ export default function HomeStack() {
 
 export type AppStackParamList = {
   Home: undefined;
+  Split: { groupId?: string }; // Optional groupId parameter
   Group: { groupId?: string }; // Optional groupId parameter
 };

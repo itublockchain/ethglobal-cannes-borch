@@ -17,11 +17,10 @@ import { useNavigation } from "@react-navigation/native";
 import { dynamicClient } from "@/lib/dynamic";
 import { Colors } from "@/constants";
 import Fonts from "@/constants/Fonts";
-import USDC from "@/assets/USDC.png";
+
 import LEFT from "@/assets/left.png";
 import VISA from "@/assets/VISA.png";
 import CARD from "@/assets/cardbg.png";
-import { get } from "lodash";
 
 const transactions = [
   {
@@ -42,6 +41,36 @@ const transactions = [
     date: "2025-07-04",
     amount: 9.99,
   },
+  {
+    id: "4",
+    place: "Coffee Shop",
+    date: "2025-07-01",
+    amount: 4.5,
+  },
+  {
+    id: "5",
+    place: "Grocery Store",
+    date: "2025-07-03",
+    amount: 76.2,
+  },
+  {
+    id: "6",
+    place: "Online Subscription",
+    date: "2025-07-04",
+    amount: 9.99,
+  },
+  {
+    id: "7",
+    place: "Grocery Store",
+    date: "2025-07-03",
+    amount: 76.2,
+  },
+  {
+    id: "8",
+    place: "Online Subscription",
+    date: "2025-07-04",
+    amount: 9.99,
+  },
 ];
 
 type Props = {};
@@ -52,7 +81,12 @@ const Group = (props: Props) => {
     useNavigation<NativeStackNavigationProp<AppStackParamList>>();
 
   const renderTransaction = ({ item }) => (
-    <Pressable style={styles.transaction_card} onPress={() => {}}>
+    <Pressable
+      style={styles.transaction_card}
+      onPress={() => {
+        navigation.navigate("Split");
+      }}
+    >
       <View style={styles.transaction_details}>
         <Text style={styles.transaction_place}>{item.place}</Text>
         <Text style={styles.transaction_date}>{item.date}</Text>
