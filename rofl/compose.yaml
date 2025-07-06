@@ -1,0 +1,7 @@
+services:
+  rofl-app:
+    build: .
+    image: "ghcr.io/oasisprotocol/demo-rofl-nodeapp"
+    platform: linux/amd64
+    environment:
+      - PRIVATE_KEY=${PRIVATE_KEY}

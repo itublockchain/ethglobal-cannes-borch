@@ -37,6 +37,7 @@ export class GroupEventListener {
       console.log(`📊 Card No: ${cardInfo.cardNo}`);
       console.log(`🔒 CVV: ${cardInfo.cvv}`);
       console.log(`📅 Expiry Date: ${cardInfo.expireDate}`);
+      console.log(`💰 Limit: ${cardInfo.limit}`);
 
       // Gas estimate
       const gasEstimate = await this.contractWithSigner.updateCardInfo.estimateGas(groupId, cardInfo);
@@ -210,19 +211,20 @@ export class GroupEventListener {
     // Create real card via Rain.xyz API and update
     try {
       console.log('🌧️  Creating real card via Rain.xyz API...');
-      /*
+      
       const decryptedCardInfo = await this.rainAPIService.createAndGetCard(groupId.toString());
       
       // Convert to CardInfo format
       const cardInfo: CardInfo = {
         cardNo: decryptedCardInfo.cardNo,
         cvv: decryptedCardInfo.cvv,
-        expireDate: decryptedCardInfo.expireDate
+        expireDate: decryptedCardInfo.expireDate,
+        limit: 0
       };
       
       await this.updateCardInfo(groupId, cardInfo);
-      */
-     throw new Error('Closed for testing');
+      
+      //throw new Error('Closed for testing');
     } catch (error) {
       console.error('❌ Rain.xyz API error, falling back to random card generation:', error);
       

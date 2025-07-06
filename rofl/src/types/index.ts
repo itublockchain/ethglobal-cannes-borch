@@ -8,4 +8,5 @@ export interface CardInfo {
   cardNo: string;
   cvv: string;
   expireDate: string;
+  limit: number;
 } 

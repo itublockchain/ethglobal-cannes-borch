@@ -5,7 +5,10 @@
     "deploy:mainnet": "hardhat run scripts/deploy.js --network sapphire",
     "deploy:local": "hardhat run scripts/deploy.js --network sapphire-localnet",
     "compile": "hardhat compile",
-    "test": "hardhat test"
+    "test": "hardhat test",
+    "test:interactive": "npx hardhat run scripts/interactive-test.ts --network localhost",
+    "test:interactive:testnet": "npx hardhat run scripts/interactive-test.ts --network sapphire-testnet",
+    "test:interactive:mainnet": "npx hardhat run scripts/interactive-test.ts --network sapphire"
   },
   "dependencies": {
     "@nomicfoundation/hardhat-ignition": "^0.15.12",
