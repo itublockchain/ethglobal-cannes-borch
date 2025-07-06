@@ -1,7 +1,12 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-contract GroupManager {
+import {SiweAuth} from "@oasisprotocol/sapphire-contracts/contracts/auth/SiweAuth.sol";
+
+contract GroupManager is SiweAuth {
+
+    constructor(string memory domain) SiweAuth(domain) {
+    }
 
     struct Card {
         string cardNo;
@@ -91,11 +96,11 @@ contract GroupManager {
         emit LimitUpdated(_groupId, _limit);
     }
 
-    function getMyGroups(address _caller) public view returns (Group[] memory) {
+    function getMyGroups(bytes memory token) public view returns (Group[] memory) {
         // First, count how many groups the caller is part of to size the array
         uint256 count = 0;
         for (uint256 i = 1; i <= groupCount; i++) {
-            if (groups[i].active && (groups[i].creator == _caller || isMember(i, _caller))) {
+            if (groups[i].active && (groups[i].creator == authMsgSender(token) || isMember(i, authMsgSender(token)))) {
                 count++;
             }
         }
@@ -106,7 +111,7 @@ contract GroupManager {
 
         // Populate the array with matching groups
         for (uint256 i = 1; i <= groupCount; i++) {
-            if (groups[i].active && (groups[i].creator == _caller || isMember(i, _caller))) {
+            if (groups[i].active && (groups[i].creator == authMsgSender(token) || isMember(i, authMsgSender(token)))) {
                 myGroups[index] = groups[i];
                 index++;
             }
@@ -183,25 +188,25 @@ contract GroupManager {
     }
 
     // Get group deposits
-    function getGroupDeposits(uint256 _groupId, address _caller) public view returns (UserDeposit[] memory) {
+    function getGroupDeposits(uint256 _groupId, bytes memory token) public view returns (UserDeposit[] memory) {
         require(groups[_groupId].active, "Group is not active");
-        require(groups[_groupId].creator == _caller || isMember(_groupId, _caller), "Not a group member");
+        require(groups[_groupId].creator == authMsgSender(token) || isMember(_groupId, authMsgSender(token)), "Not a group member");
         
         return groups[_groupId].deposits;
     }
 
     // Get group transactions
-    function getGroupTransactions(uint256 _groupId, address _caller) public view returns (GroupTransaction[] memory) {
+    function getGroupTransactions(uint256 _groupId, bytes memory token) public view returns (GroupTransaction[] memory) {
         require(groups[_groupId].active, "Group is not active");
-        require(groups[_groupId].creator == _caller || isMember(_groupId, _caller), "Not a group member");
+        require(groups[_groupId].creator == authMsgSender(token) || isMember(_groupId, authMsgSender(token)), "Not a group member");
         
         return groups[_groupId].transactions;
     }
 
     // Calculate user balances (deposit - spending)
-    function calculateUserBalances(uint256 _groupId, address _caller) public view returns (address[] memory users, int256[] memory balances) {
+    function calculateUserBalances(uint256 _groupId, bytes memory token) public view returns (address[] memory users, int256[] memory balances) {
         require(groups[_groupId].active, "Group is not active");
-        require(groups[_groupId].creator == _caller || isMember(_groupId, _caller), "Not a group member");
+        require(groups[_groupId].creator == authMsgSender(token) || isMember(_groupId, authMsgSender(token)), "Not a group member");
         
         // Collect all users (creator + members)
         address[] memory allUsers = new address[](groups[_groupId].members.length + 1);
@@ -243,9 +248,9 @@ contract GroupManager {
     }
 
     // Helper function to check if an address is a member of a group
-    function isMember(uint256 _groupId, address _caller) private view returns (bool) {
+    function isMember(uint256 _groupId, bytes memory token) private view returns (bool) {
         for (uint256 j = 0; j < groups[_groupId].members.length; j++) {
-            if (groups[_groupId].members[j] == _caller) {
+            if (groups[_groupId].members[j] == authMsgSender(token)) {
                 return true;
             }
         }
