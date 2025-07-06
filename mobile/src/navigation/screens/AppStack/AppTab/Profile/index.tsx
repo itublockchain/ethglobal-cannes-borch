@@ -22,6 +22,13 @@ const Profile = (props: Props) => {
           await dynamicClient.auth.logout();
         }}
       />
+      <Button
+        title="Export"
+        onPress={async () => {
+          // Show the authentication UI
+          await dynamicClient.ui.auth.show();
+        }}
+      />
     </View>
   );
 };

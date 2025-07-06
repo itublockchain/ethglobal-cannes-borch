@@ -11,6 +11,7 @@ import { AppStackParamList } from "@/navigation/screens/AppStack";
 // import { createSiweMessage, generateSiweNonce } from "viem/siwe";
 // import { hexToCompactSignature, compactSignatureToSignature } from "viem";
 // import { sapphireTestnet } from "viem/chains";
+import { useContext } from "react";
 
 import { Text } from "@/components/ui";
 
@@ -24,8 +25,10 @@ import { Colors } from "@/constants";
 import Fonts from "@/constants/Fonts";
 
 import USDC from "@/assets/USDC.png";
+import { ClientContext } from "@/App";
+import { useQuery } from "@tanstack/react-query";
 
-console.log(dynamicClient.wallets.primary?.address);
+import { SAPPHIRE_ABI } from "@/constants/ABI";
 
 // async function Read() {
 //   const mesg = createSiweMessage({
@@ -81,9 +84,32 @@ console.log(dynamicClient.wallets.primary?.address);
 type Props = {};
 
 const HomeScreen = (props: Props) => {
-  const { auth } = useDynamic();
+  const { wallets } = useDynamic();
   const navigation =
     useNavigation<NativeStackNavigationProp<AppStackParamList>>();
+
+  const clients = useContext(ClientContext);
+  console.log(clients);
+
+  const { data, isLoading, isError, error } = useQuery({
+    queryKey: ["groups"],
+    enabled: !!wallets.primary?.address && !!clients.publicOasisClient, // null/undefined kontrolü
+    queryFn: async () => {
+      if (!clients.publicOasisClient) throw new Error("No client yet");
+
+      return clients.publicOasisClient.readContract({
+        address: "0x02bFB5e056959eDc778dB30A1e4528fcB3eA8eBd",
+        abi: SAPPHIRE_ABI,
+        functionName: "getMyGroups",
+        args: ["0x5e3aCEe942a432e114F01DCcCD06c904a859eDB1"],
+      });
+    },
+  });
+
+  console.log("Groups Data:", data);
+  console.log("Is Loading:", isLoading);
+  console.log("Is Error:", isError);
+  console.log("Error:", error);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -113,12 +139,12 @@ const HomeScreen = (props: Props) => {
           </View>
           <View style={styles.balance_container}>
             <Text style={styles.card_currency_title}>Available Balance</Text>
-            <Text style={styles.card_currency_balance}>$ 5,886.32</Text>
+            <Text style={styles.card_currency_balance}>$ 0</Text>
           </View>
           <View style={styles.card_currency_container}>
             <View style={styles.card_currency_inner_container}>
               <Text style={styles.card_currency_text}>
-                Total Debt <Text style={styles.red}>$500</Text>
+                Total Debt <Text style={styles.red}>$50</Text>
               </Text>
             </View>
           </View>
@@ -131,94 +157,58 @@ const HomeScreen = (props: Props) => {
         <View>
           <Text style={styles.section_title}>Groups</Text>
         </View>
-        <Pressable
-          style={styles.group_card_container}
-          onPress={() =>
-            //@ts-ignore
-            navigation.navigate("Group", {
-              groupId: "12984718924",
-            })
-          }
-        >
-          <View style={styles.group_card_container_left}>
-            <Image
-              source={{
-                uri: "https://avatar.iran.liara.run/public",
-              }}
-              style={styles.group_card_container_image}
-            />
-            <View style={styles.group_card_information_container}>
-              <Text style={styles.group_card_information_name}>Grup ismi</Text>
-              <Text style={styles.group_card_information_creator}>
-                Grup Oluşturan
-              </Text>
-            </View>
-          </View>
-          <View style={styles.group_card_container_right}>
-            <Text style={styles.group_card_information_name}>$35,43</Text>
-            <Text style={[styles.group_card_information_creator, styles.red]}>
-              Owe
-            </Text>
-          </View>
-        </Pressable>
-        <Pressable
-          style={styles.group_card_container}
-          onPress={() =>
-            navigation.navigate("Group", {
-              groupId: "99999999",
-            })
-          }
-        >
-          <View style={styles.group_card_container_left}>
-            <Image
-              source={{
-                uri: "https://avatar.iran.liara.run/public",
-              }}
-              style={styles.group_card_container_image}
-            />
-            <View style={styles.group_card_information_container}>
-              <Text style={styles.group_card_information_name}>Grup ismi</Text>
-              <Text style={styles.group_card_information_creator}>
-                Grup Oluşturan
-              </Text>
-            </View>
-          </View>
-          <View style={styles.group_card_container_right}>
-            <Text style={styles.group_card_information_name}>$35,43</Text>
-            <Text style={[styles.group_card_information_creator, styles.red]}>
-              Owe
-            </Text>
-          </View>
-        </Pressable>
-        <Pressable
-          style={styles.group_card_container}
-          onPress={() =>
-            navigation.navigate("Group", {
-              groupId: "12345",
-            })
-          }
-        >
-          <View style={styles.group_card_container_left}>
-            <Image
-              source={{
-                uri: "https://avatar.iran.liara.run/public",
-              }}
-              style={styles.group_card_container_image}
-            />
-            <View style={styles.group_card_information_container}>
-              <Text style={styles.group_card_information_name}>Grup ismi</Text>
-              <Text style={styles.group_card_information_creator}>
-                Grup Oluşturan
-              </Text>
-            </View>
-          </View>
-          <View style={styles.group_card_container_right}>
-            <Text style={styles.group_card_information_name}>$35,43</Text>
-            <Text style={[styles.group_card_information_creator, styles.red]}>
-              Owe
-            </Text>
-          </View>
-        </Pressable>
+        {data && data.length > 0 ? (
+          data.map((el, _i) => {
+            return (
+              <Pressable
+                style={styles.group_card_container}
+                onPress={() =>
+                  //@ts-ignore
+                  navigation.navigate("Group", {
+                    data: el,
+                  })
+                }
+                key={_i}
+              >
+                <View style={styles.group_card_container_left} key={_i}>
+                  <Image
+                    source={{
+                      uri: "https://avatar.iran.liara.run/public",
+                    }}
+                    style={styles.group_card_container_image}
+                  />
+                  <View style={styles.group_card_information_container}>
+                    <Text style={styles.group_card_information_name}>
+                      {el.name || "Group Name"}
+                    </Text>
+                    <Text style={styles.group_card_information_creator}>
+                      {`${el.creator.slice(0, 6)}...${el.creator.slice(
+                        el.creator.length - 4,
+                        el.creator.lengt
+                      )}` || "creator.borch.eth"}
+                    </Text>
+                  </View>
+                </View>
+                <View style={styles.group_card_container_right}>
+                  <Text style={styles.group_card_information_name}>
+                    $
+                    {el.transactions
+                      .reduce((acc, a) => {
+                        // share değerini Number’a çeviriyoruz
+                        return acc + Number(a.totalAmount);
+                      }, 0)
+                      .toFixed(2)}
+                  </Text>
+                  <Text style={[styles.group_card_information_creator]}>
+                    Total
+                  </Text>
+                </View>
+              </Pressable>
+            );
+          })
+        ) : (
+          <Text> No Gtoup Found!</Text>
+        )}
       </View>
       {/* <Text>HomeScreen</Text>
       <Button

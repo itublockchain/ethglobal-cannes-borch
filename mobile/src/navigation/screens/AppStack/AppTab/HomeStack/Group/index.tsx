@@ -78,31 +78,42 @@ const transactions = [
 
 type Props = {};
 
-const Group = (props: Props) => {
+const Group = ({ route }) => {
   const { auth } = useDynamic();
   const navigation =
     useNavigation<NativeStackNavigationProp<AppStackParamList>>();
 
+  const { wallets } = useDynamic();
+
   const [reveal, setReveal] = React.useState(false);
+
+  const { data } = route.params || {};
 
   const maskedNumber = "**** **** **** ****";
   const maskedDate = "**/**";
   const maskedCvc = "***";
   const maskedName = "************";
 
+  console.log(data.transactions);
+
   const renderTransaction = ({ item }) => (
     <Pressable
       style={styles.transaction_card}
       onPress={() => {
-        navigation.navigate("Split");
+        //@ts-ignore
+        navigation.navigate("Split", {
+          item: item || [],
+        });
       }}
     >
       <View style={styles.transaction_details}>
-        <Text style={styles.transaction_place}>{item.place}</Text>
-        <Text style={styles.transaction_date}>{item.date}</Text>
+        <Text style={styles.transaction_place}>{item.description}</Text>
+        <Text style={styles.transaction_date}>
+          {new Date(Number(item.timestamp)).getTime()}
+        </Text>
       </View>
       <RNText style={styles.transaction_amount}>
-        $ {item.amount.toFixed(2)}
+        $ {Number(item.totalAmount).toFixed(2)}
       </RNText>
     </Pressable>
   );
@@ -123,7 +134,7 @@ const Group = (props: Props) => {
             style={styles.avatar}
           />
           <View style={styles.header_title_container}>
-            <Text style={styles.header_bottom_title}>Cannes Grubu</Text>
+            <Text style={styles.header_bottom_title}>{data.name}</Text>
           </View>
         </View>
       </View>
@@ -143,7 +154,9 @@ const Group = (props: Props) => {
         <View style={styles.credit_card_upper_container}>
           <View style={styles.card_upper_text_container}>
             <Text style={styles.credit_card_upper_text_label}>Balance</Text>
-            <Text style={styles.credit_card_upper_text_value}>$ 2,163.03</Text>
+            <Text style={styles.credit_card_upper_text_value}>
+              $ {Number(data.card.limit) * 10 ** -6 || "0.00"}
+            </Text>
           </View>
           <Image
             source={VISA}
@@ -152,32 +165,26 @@ const Group = (props: Props) => {
         </View>
         <View style={styles.cerdit_card_number_container}>
           <Text style={styles.cerdit_card_number}>
-            {reveal ? "4444 4444 4444 4444" : maskedNumber}
+            {`${data.card.cardNo.slice(0, 4)} ${data.card.cardNo.slice(
+              4,
+              8
+            )} ${data.card.cardNo.slice(8, 12)} ${data.card.cardNo.slice(
+              12,
+              16
+            )}` || "4444 4444 4444 4444"}
           </Text>
         </View>
         <View style={styles.cerdit_card_information_container}>
-          <Text style={styles.cerdit_card_name}>
-            {reveal ? "BERIL BEKTAS" : maskedName}
-          </Text>
+          <Text style={styles.cerdit_card_name}>{"YASIR KILINC"}</Text>
           <View style={styles.cerdit_card_date_cvc_container}>
             <Text style={styles.cerdit_card_date}>
-              {reveal ? "02/27" : maskedDate}
+              {data ? data.card.expireDate : "44/44"}
             </Text>
             <Text style={styles.cerdit_card_cvc}>
-              {reveal ? "163" : maskedCvc}
+              {data ? data.card.cvv : "444"}
             </Text>
           </View>
         </View>
-        <Pressable
-          style={styles.eye_button}
-          onPressIn={() => setReveal(true)}
-          onPressOut={() => setReveal(false)}
-        >
-          <Image
-            source={reveal ? EYE_OFF : EYE}
-            style={{ width: 22, height: 22, tintColor: Colors.WHITE }}
-          />
-        </Pressable>
       </View>
       <Text style={styles.members_header}>Members</Text>
       <View style={styles.members_container}>
@@ -198,14 +205,14 @@ const Group = (props: Props) => {
             source={{ uri: "https://avatar.iran.liara.run/public" }}
             style={styles.avatar}
           />
-          <Text>exTypen</Text>
+          <Text>feyyazcigim</Text>
         </View>
         <View style={styles.member}>
           <Image
             source={{ uri: "https://avatar.iran.liara.run/public" }}
             style={styles.avatar}
           />
-          <Text>exTypen</Text>
+          <Text>beril</Text>
         </View>
       </View>
 
@@ -213,7 +220,7 @@ const Group = (props: Props) => {
       <View style={styles.transactions_container}>
         <Text style={styles.section_title}>Transactions</Text>
         <FlatList
-          data={transactions}
+          data={data.transactions || transactions}
           keyExtractor={(item) => item.id}
           renderItem={renderTransaction}
           ItemSeparatorComponent={() => <View style={styles.separator} />}

@@ -16,8 +16,16 @@ import {
   Inter_200ExtraLight,
   Inter_100Thin,
 } from "@expo-google-fonts/inter";
+import { createContext } from "react";
 
-import { dynamicClient } from "@/lib/dynamic";
+export const ClientContext = createContext({
+  publicOasisClient: null,
+  walletOasisClient: null,
+  publicBaseClient: null,
+  walletBaseClient: null,
+});
+
+import { dynamicClient, initializeClients, useDynamic } from "@/lib/dynamic";
 
 import RootStack from "./navigation";
 import { NavigationContainer } from "@react-navigation/native";
@@ -36,11 +44,37 @@ export function App() {
   const [onDynamicReady, setOnDynamicReady] = React.useState(false);
   const [onNavigationReady, setOnNavigationReady] = React.useState(false);
 
+  const [publicOasisClient, setPublicOasisClient] = React.useState<any>(null);
+  const [walletOasisClient, setWalletOasisClient] = React.useState<any>(null);
+  const [publicBaseClient, setPublicBaseClient] = React.useState<any>(null);
+  const [walletBaseClient, setWalletBaseClient] = React.useState<any>(null);
+
+  const { wallets } = useDynamic();
+
   dynamicClient.sdk.on("loadedChanged", (loaded) => {
     if (loaded) {
       setOnDynamicReady(true);
+      initializeClients(
+        setPublicOasisClient,
+        setWalletOasisClient,
+        setPublicBaseClient,
+        setWalletBaseClient,
+        wallets.primary
+      ).catch((error) => {
+        console.error("Error initializing clients:", error);
+      });
     }
   });
+
+  React.useEffect(() => {
+    if (publicBaseClient) {
+    }
+  }, [
+    publicOasisClient,
+    walletOasisClient,
+    publicBaseClient,
+    walletBaseClient,
+  ]);
 
   React.useEffect(() => {
     if (onDynamicReady && onNavigationReady) {
@@ -62,18 +96,27 @@ export function App() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <NavigationContainer
-        linking={{
-          enabled: true,
-          prefixes: ["facade://"],
-        }}
-        onReady={() => {
-          setOnNavigationReady(true);
+      <ClientContext.Provider
+        value={{
+          publicOasisClient,
+          walletOasisClient,
+          publicBaseClient,
+          walletBaseClient,
         }}
       >
-        <dynamicClient.reactNative.WebView />
-        <RootStack />
-      </NavigationContainer>
+        <NavigationContainer
+          linking={{
+            enabled: true,
+            prefixes: ["facade://"],
+          }}
+          onReady={() => {
+            setOnNavigationReady(true);
+          }}
+        >
+          <dynamicClient.reactNative.WebView />
+          <RootStack />
+        </NavigationContainer>
+      </ClientContext.Provider>
     </QueryClientProvider>
   );
 }

@@ -7,7 +7,6 @@ import {
   Image,
   TextInput,
   SafeAreaView,
-  Button,
 } from "react-native";
 import Checkbox from "expo-checkbox";
 import { Text } from "@/components/ui";
@@ -20,71 +19,105 @@ import { AppStackParamList } from "@/navigation/screens/AppStack";
 
 import LEFT from "@/assets/left.png";
 
-// Dummy data – replace later
-const expense = { id: "e1", title: "Dinner Bill", amount: 120 };
-const participantsData = [
-  { id: "1", name: "alice.bch.eth" },
-  { id: "2", name: "bob.bch.eth" },
-  { id: "3", name: "charlie.bch.eth" },
-  { id: "4", name: "You" },
-];
+// Route'dan gelen veri tipi
+interface ShareData {
+  amount: bigint;
+  user: string;
+}
+
+interface RouteItem {
+  description: string;
+  paidBy: string;
+  shares: ShareData[];
+  timestamp: bigint;
+  totalAmount: bigint;
+  transactionId: bigint;
+}
 
 type Person = {
   id: string;
   name: string;
   included: boolean;
-  shareInput: string; // raw string
+  shareInput: string;
 };
 
-const normalizeNumber = (v: string) => v.replace(",", ".");
+type SplitProps = {
+  route: {
+    params: {
+      item: RouteItem;
+    };
+  };
+};
+
+// Utility: normalize string to float
+const normalizeNumber = (v: string) => v.replace(/,/g, ".");
 const toFloat = (v: string) => parseFloat(normalizeNumber(v)) || 0;
 
-const Split: React.FC = () => {
+// Utility: mask address to first 4 and last 4 characters
+const maskAddress = (addr: string) => {
+  const start = addr.slice(0, 4);
+  const end = addr.slice(-4);
+  return `${start}...${end}`;
+};
+
+const Split: React.FC<SplitProps> = ({ route }) => {
   const navigation =
     useNavigation<NativeStackNavigationProp<AppStackParamList>>();
+  const { item } = route.params;
 
-  const [people, setPeople] = useState<Person[]>(() =>
-    participantsData.map((p) => ({ ...p, included: true, shareInput: "0" }))
-  );
-  const [leftover, setLeftover] = useState(expense.amount);
+  // Toplam tutarı BigInt'ten number'a çevir ve 2 ondalık
+  const expense = {
+    title: item.description,
+    amount: Number(item.totalAmount),
+  };
 
-  /** Equal split on mount */
-  useEffect(() => handleEqualSplit(), []);
+  // Başlangıç payları (maskelenmiş adres isimleri)
+  const initialPeople: Person[] = item.shares.map((s) => ({
+    id: s.user,
+    name: maskAddress(s.user),
+    included: true,
+    shareInput: Number(s.amount).toFixed(2),
+  }));
 
-  /** Re-calc leftover whenever inputs change */
+  const [people, setPeople] = useState<Person[]>(initialPeople);
+  const [leftover, setLeftover] = useState<number>(() => {
+    const allocated = initialPeople.reduce(
+      (sum, p) => sum + toFloat(p.shareInput),
+      0
+    );
+    return parseFloat((expense.amount - allocated).toFixed(2));
+  });
+
+  // Kalan miktarı hesapla
   useEffect(() => {
     const allocated = people.reduce(
       (sum, p) => sum + (p.included ? toFloat(p.shareInput) : 0),
       0
     );
-    setLeftover(Number((expense.amount - allocated).toFixed(2)));
-  }, [people]);
+    setLeftover(parseFloat((expense.amount - allocated).toFixed(2)));
+  }, [people, expense.amount]);
 
-  /** Toggle checkbox */
+  // Checkbox toggle
   const toggleInclude = (id: string, value?: boolean) => {
     setPeople((prev) =>
       prev.map((p) =>
         p.id === id
-          ? { ...p, included: value ?? !p.included, shareInput: "0" }
+          ? { ...p, included: value ?? !p.included, shareInput: "0.00" }
           : p
       )
     );
   };
 
-  /** Handle per-person input */
+  // Share input güncelle
   const updateShare = (id: string, value: string) => {
-    // 1. Keep only digits + separators
     let cleaned = value.replace(/[^0-9.,]/g, "");
-
-    // 2. Convert ,→. and remove extra dots
-    cleaned = cleaned.replace(",", ".");
+    cleaned = normalizeNumber(cleaned);
     const firstDot = cleaned.indexOf(".");
     if (firstDot !== -1) {
       cleaned =
         cleaned.slice(0, firstDot + 1) +
         cleaned.slice(firstDot + 1).replace(/\./g, "");
     }
-
     const numeric = parseFloat(cleaned) || 0;
 
     setPeople((prev) => {
@@ -94,30 +127,15 @@ const Split: React.FC = () => {
         0
       );
       const maxAllowed = Math.max(0, expense.amount - othersSum);
-
-      // Clamp only if exceeds
-      const finalStr = numeric > maxAllowed ? maxAllowed.toString() : cleaned;
-
+      const finalStr = numeric > maxAllowed ? maxAllowed.toFixed(2) : cleaned;
       return prev.map((p) =>
         p.id === id ? { ...p, shareInput: finalStr } : p
       );
     });
   };
 
-  /** Equal split helper */
-  const handleEqualSplit = () => {
-    const included = people.filter((p) => p.included);
-    const per = included.length ? expense.amount / included.length : 0;
-    const formatted = per.toFixed(2);
-
-    setPeople((prev) =>
-      prev.map((p) => (p.included ? { ...p, shareInput: formatted } : p))
-    );
-  };
-
   return (
     <SafeAreaView style={styles.container}>
-      {/* Header */}
       <View style={styles.header}>
         <Pressable onPress={navigation.goBack} style={styles.backButton}>
           <Image source={LEFT} style={styles.backIcon} />
@@ -131,7 +149,6 @@ const Split: React.FC = () => {
 
         {people.map((person) => (
           <View key={person.id} style={styles.row}>
-            {/* Checkbox + Name (larger tap area) */}
             <Pressable
               style={styles.leftArea}
               onPress={() => toggleInclude(person.id)}
@@ -148,7 +165,6 @@ const Split: React.FC = () => {
               </Text>
             </Pressable>
 
-            {/* Amount input */}
             <TextInput
               style={styles.input}
               keyboardType="decimal-pad"
@@ -161,12 +177,6 @@ const Split: React.FC = () => {
           </View>
         ))}
 
-        {/* Equal split button */}
-        <Pressable style={styles.equalBtn} onPress={handleEqualSplit}>
-          <Text style={styles.equalBtnText}>Equal Split</Text>
-        </Pressable>
-
-        {/* Leftover info */}
         <Text style={styles.info}>
           Leftover to assign: $ {leftover.toFixed(2)}
         </Text>
@@ -174,11 +184,10 @@ const Split: React.FC = () => {
         <Pressable
           style={[
             styles.confirmButton,
-            leftover !== 0 || people.every((p) => !p.included)
-              ? styles.confirmButtonDisabled
-              : {},
+            (leftover !== 0 || people.every((p) => !p.included)) &&
+              styles.confirmButtonDisabled,
           ]}
-          onPress={() => console.log("Creating your group...")}
+          onPress={() => console.log("Splitting expense...")}
           disabled={leftover !== 0 || people.every((p) => !p.included)}
         >
           <Text style={[Fonts.mdMedium, styles.confirmButtonText]}>
@@ -218,7 +227,6 @@ const styles = StyleSheet.create({
     paddingBottom: getHeight(16),
   },
 
-  /* Row styles */
   row: {
     flexDirection: "row",
     alignItems: "center",
@@ -233,7 +241,6 @@ const styles = StyleSheet.create({
   },
   name: { ...Fonts.mdMedium, color: Colors.GRAY_900 },
 
-  /* Input */
   input: {
     width: 90,
     paddingVertical: 6,
@@ -246,17 +253,6 @@ const styles = StyleSheet.create({
     color: Colors.GRAY_900,
   },
 
-  /* Equal button */
-  equalBtn: {
-    marginTop: getHeight(24),
-    backgroundColor: Colors.SURFACE_LIGHT,
-    borderRadius: 30,
-    paddingVertical: getHeight(12),
-    alignItems: "center",
-  },
-  equalBtnText: { ...Fonts.mdSemibold, color: Colors.WHITE },
-
-  /* Info */
   info: {
     ...Fonts.smallRegular,
     color: Colors.GRAY_500,

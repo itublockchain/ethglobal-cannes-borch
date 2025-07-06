@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import {
   SafeAreaView,
   View,
@@ -14,9 +14,14 @@ import { Text } from "@/components/ui";
 import { Fonts } from "@/constants/Fonts";
 import { Colors } from "@/constants";
 import { getHeight, getWidth } from "@/constants/Spaces";
+import { ClientContext } from "@/App";
+import { SAPPHIRE_ABI } from "@/constants/ABI";
+import { useDynamic } from "@/lib/dynamic";
 
 function CreateGroup() {
   const [image, setImage] = useState<string | null>(null);
+  const clients = useContext(ClientContext);
+  const { wallets } = useDynamic();
 
   const pickImage = async () => {
     // No permissions request is necessary for launching the image library
@@ -72,7 +77,24 @@ function CreateGroup() {
 
         <Pressable
           style={styles.send_button}
-          onPress={() => console.log("Creating your group...")}
+          onPress={async () => {
+            console.log("Creating group...");
+            clients.walletOasisClient
+              .writeContract({
+                address: "0x71Cfe1f469af5Dd78f134e486502b594A6231C51",
+                abi: SAPPHIRE_ABI,
+                functionName: "createGroup",
+                args: [[wallets.primary!.address], "Group Name"],
+              })
+              .then((res) => {
+                Alert.alert("Success", "Group created successfully!");
+                console.log(res);
+              })
+              .catch((error) => {
+                console.error(error);
+                Alert.alert("Error", "Failed to create group.");
+              });
+          }}
         >
           <Text style={[Fonts.mdMedium, styles.send_button_text]}>
             Create Group

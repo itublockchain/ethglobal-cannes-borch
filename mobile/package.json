@@ -16,6 +16,7 @@
     "@dynamic-labs/zerodev-extension": "^4.21.1",
     "@expo-google-fonts/inter": "^0.4.1",
     "@expo/metro-runtime": "~4.0.0",
+    "@oasisprotocol/sapphire-paratime": "^2.2.0",
     "@react-navigation/bottom-tabs": "^7.1.1",
     "@react-navigation/elements": "^2.2.3",
     "@react-navigation/native": "^7.0.12",

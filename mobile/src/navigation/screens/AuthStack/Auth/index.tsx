@@ -20,10 +20,11 @@ const Auth = (props: Props) => {
     <SafeAreaView style={styles.container}>
       <View style={styles.top_container}>
         <View style={styles.title_container}>
-          <Text style={[Fonts.xxxlBlack, styles.title]}>
-            TAILOR YOU FINANCE
+          <Text
+            style={[Fonts.xxxlBlack, styles.title, { textAlign: "center" }]}
+          >
+            SPLITWISE WAS YESTERDAY. MEET BORCH.
           </Text>
-          <Text style={[Fonts.xxxlBlack, styles.title]}>WITH SABIPAY</Text>
         </View>
         <Image
           source={ENTRY}
